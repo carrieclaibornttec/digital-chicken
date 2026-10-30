@@ -47,6 +47,15 @@ Re-run `install.ps1` after moving it.
 
 3. Start a new Claude Code or Codex session. The skill loads at session start.
 
+## Where the models are
+
+New models show up in Model Garden for `mcs-internal-codeai`:
+
+https://console.cloud.google.com/agent-platform/model-garden?project=mcs-internal-codeai
+
+A display name there is not the API ID. `add-vertex-model` probes Vertex
+before it writes a route.
+
 ## Which skill to run
 
 | You have | Ask for |
