@@ -16,9 +16,9 @@ Wire one verified Vertex model into the local proxy and the pickers that read it
 Probe first. Never invent a model ID from a Model Garden display name.
 
 Read `machine.md` in this directory before editing anything. It has this machine's
-paths, GCP project, and account. If `machine.md` is missing, discover the four
-config files (LiteLLM, T3, OpenCode, Desktop gateway) and write `machine.md` from
-what you found. Do not copy another person's proxy key, gateway key, or ADC.
+paths, GCP project, and account. If it is missing, write it first — see
+"Write machine.md" below. Do not copy another person's proxy key, gateway key,
+or ADC, and do not copy another person's `machine.md`.
 
 Org defaults (override from `machine.md` when it disagrees):
 
@@ -30,6 +30,57 @@ Org defaults (override from `machine.md` when it disagrees):
 Auth is Application Default Credentials. Do not set `GOOGLE_APPLICATION_CREDENTIALS`
 or `vertex_credentials`. Do not `gcloud config set project`. Leave the user's
 default gcloud project unchanged.
+
+## Write machine.md
+
+`machine.md` is created on the machine, by the agent, the first time this skill
+runs. It is not part of the shared pack. Peers do not receive one and should
+not be handed one.
+
+Discover, do not invent. Search the user profile for the files below. Write a
+row only for a file you actually found. If the LiteLLM config or its env file
+is missing, stop and say the proxy is not set up yet. Do not scaffold LiteLLM,
+ADC, or the T3 provider. This skill adds a model to a proxy that already runs.
+
+| Row | How to find it |
+|---|---|
+| LiteLLM config | A `config.yaml` whose `model_list` uses `vertex_ai/` and whose `general_settings` set a listen port. Record its full path. |
+| Proxy key | The env file that config reads for `LITELLM_MASTER_KEY`. Record the path and the variable name only. Never the value. |
+| Proxy log | The log path in the start script or config, if one is set. |
+| Start script | The `.ps1` next to the config that launches LiteLLM. |
+| Scheduled task | `Get-ScheduledTask` and find the task whose action runs that script. Record the task name. |
+| Listen address | The host and port that script or config binds. Do not assume `127.0.0.1:47862` if the file says otherwise. |
+| T3 custom models | `.t3\userdata\settings.json`. Find the `providerInstances` entry whose `ANTHROPIC_BASE_URL` is the proxy. Record the instance key and `config.customModels`. |
+| OpenCode proxy models | `.config\opencode\opencode.json`. Find the provider whose `baseURL` is the proxy. Record the provider key and its `models`. |
+| Desktop gateway | `AppData\Local\Claude-3p\configLibrary\*.json`, the profile whose `inferenceGatewayBaseUrl` is the proxy. Record that file and `inferenceModels`. |
+| GCP project | `vertex_project` in the LiteLLM config. |
+| Location | `vertex_location` in the LiteLLM config. |
+| Account | `gcloud auth application-default print-access-token` succeeding is enough. Record the account from `gcloud auth list` only if it prints one. |
+| Backups | A `backups` directory the user already uses. If none, use `~\backups`. |
+| gcloud default project | `gcloud config get-value project`. Record it and leave it unchanged. |
+
+Write the file next to `SKILL.md` using the same table shape as the example
+below. List routes already present in the LiteLLM config at the bottom, and
+say to append rather than replace.
+
+Do not write any secret value: not `LITELLM_MASTER_KEY`, not
+`inferenceGatewayApiKey`, not an ADC token, not `ANTHROPIC_AUTH_TOKEN`.
+
+```markdown
+# This machine
+
+Local only. Do not commit this file. Do not paste the proxy key or gateway key.
+
+| What | Path |
+|---|---|
+| LiteLLM config | `<full path>` |
+| Proxy key | `<full path>` (`LITELLM_MASTER_KEY`) |
+| Listen address | `<host:port>` |
+| GCP project | `<project>` |
+| Location | `<location>` |
+
+Routes already on this proxy: `<names>`. Append. Do not drop these.
+```
 
 ## 1. Probe before editing
 
