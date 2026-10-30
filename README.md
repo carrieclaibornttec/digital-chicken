@@ -1,7 +1,7 @@
 # Vertex skills
 
-Shared skills for wiring new Vertex AI models into a local LiteLLM proxy and
-the T3 Code, OpenCode, and Claude Desktop pickers.
+Shared skills for a local LiteLLM gateway in front of Vertex AI, and for
+adding models to it. Claude Desktop, T3 Code, and OpenCode read the gateway.
 
 ## Layout
 
@@ -11,8 +11,12 @@ vertex-skills/
   .gitignore          machine.md is local and stays out of git
   install.ps1         junctions this pack into the local editor homes
   skills/
+    setup-vertex-gateway/
+      SKILL.md        first-time proxy, Desktop, and T3 setup (share this)
+      README.md
     add-vertex-model/
-      SKILL.md        the procedure (share this)
+      SKILL.md        add one model to a gateway that already runs (share this)
+      README.md
       machine.md      this PC only (do not share, do not commit)
 ```
 
@@ -33,7 +37,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 That creates a directory junction (not a copy):
 
 - `%USERPROFILE%\.claude\skills\add-vertex-model` → this pack
-- `%USERPROFILE%\.codex\skills\add-vertex-model` → this pack
+- `%USERPROFILE%\.claude\skills\setup-vertex-gateway` → this pack
+- `%USERPROFILE%\.codex\skills\<same two>` → this pack
 - `%USERPROFILE%\.claude_glm_vertex\skills` → `%USERPROFILE%\.claude\skills`
   only when that home exists and has no `skills` directory yet
 
@@ -42,17 +47,20 @@ Re-run `install.ps1` after moving it.
 
 3. Start a new Claude Code or Codex session. The skill loads at session start.
 
-## What a peer still has to set up themselves
+## Which skill to run
 
-The skill does not install LiteLLM, ADC, or the T3 provider. Each person needs:
+| You have | Ask for |
+|---|---|
+| A fresh T3 or Claude Desktop, no local proxy | `setup-vertex-gateway` |
+| A proxy already running, and a new model | `add-vertex-model` |
 
-- their own `gcloud auth application-default login` on project `mcs-internal-codeai`
-- a local LiteLLM proxy on `127.0.0.1:47862`
-- their own proxy key
+Setup uses your own `gcloud auth application-default login` on project
+`mcs-internal-codeai`, installs LiteLLM on `127.0.0.1:47862`, and generates
+your proxy key on that machine. It does not take anyone else's key.
 
-The first time the skill runs on their machine it should write `machine.md`
-next to `SKILL.md` from the paths it discovered. That file lists local paths
-and must not be committed or forwarded.
+`add-vertex-model` only adds a route. On its first run it writes `machine.md`
+next to its `SKILL.md` from paths it found. Setup writes that same file when
+it finishes. Either way it stays on the machine. Do not commit or forward it.
 
 ## Do not share
 
